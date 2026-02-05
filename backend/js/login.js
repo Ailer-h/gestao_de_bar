@@ -21,12 +21,15 @@ function log_in(){
 
             }else if (request_result['code'] == 404){
                 console.log("User not found")
+                //Rodar toast
             
             }else if (request_result['code'] == 403){
                 console.log("Inactive")
+                //Rodar toast
             
             }else if (request_result['code'] == 401){
                 console.log("Wrong password")
+                //Rodar toast
 
             }
         }

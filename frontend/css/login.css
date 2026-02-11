@@ -1,0 +1,73 @@
+:root {
+    --bg-dark: #4c4f56;
+    --panel: #a7a9b3;
+    --text: #363942;
+    --white: #ffffff;
+    --danger: #c2002f;
+}
+
+body.login-page {
+    background: var(--bg-dark);
+    color: var(--text);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+    width: min(100%, 430px);
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 34px 32px;
+    box-shadow: 0 15px 32px rgba(0, 0, 0, 0.2);
+}
+
+.brand-logo {
+    width: 194px;
+    height: 194px;
+    background: #ececee;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.brand-logo-img {
+    width: 86%;
+    height: 86%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.login-card .form-label {
+    font-size: 1.95rem;
+    margin-bottom: 0.35rem;
+}
+
+.login-card .form-control {
+    border: none;
+    background: #e5e6ea;
+    height: 34px;
+}
+
+.login-card .btn {
+    border-radius: 8px;
+    background: var(--danger);
+    border: none;
+    letter-spacing: 0.02em;
+}
+
+@media (max-width: 576px) {
+    .login-card {
+        padding: 26px 20px;
+    }
+
+    .brand-logo {
+        width: 168px;
+        height: 168px;
+    }
+
+    .login-card .form-label {
+        font-size: 1.2rem;
+    }
+}

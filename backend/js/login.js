@@ -1,6 +1,25 @@
 let username_obj = document.getElementById("username");
 let password_obj = document.getElementById("password");
 
+document.addEventListener("DOMContentLoaded", function(){
+
+    //Checa se o user já tem uma sessão.
+    //Se tiver, pula o login
+    $.ajax({
+        url: "backend/php/check_session.php",
+        method: "post",
+        data: {},
+
+        success: function(data){
+            let request_result = JSON.parse(data)
+
+            if (request_result['code'] == 200){
+                window.location.href = "frontend/html/dashboard.html"
+            }
+        }
+    })
+})
+
 function log_in(){
 
     $.ajax({

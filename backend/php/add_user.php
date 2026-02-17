@@ -13,10 +13,17 @@
             "code": 403,
             "msg": "User already exists"
         }'; //403 Forbidden
+    
     }else{
         //TO-DO: Adicionar criptografia para a senha. 
 
         mysqli_query($connection, "insert into users (username, user_password, account_type) values ('$username','$password','$acc_type')");
+        
+        echo '{
+            "code": 200,
+            "msg": "Session found"
+        }'; //200 OK
+
     }
 
     mysqli_close($connection);

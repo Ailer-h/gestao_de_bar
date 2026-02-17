@@ -40,4 +40,6 @@
         }'; //200 OK
     }
 
+    mysqli_close($connection);
+
 ?>

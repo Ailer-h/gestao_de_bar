@@ -8,8 +8,8 @@
     $qtd_produto = $_POST['qtd'];
     $valor_compra = $_POST['valor_compra'];
 
-    if($qtd_produto <= 0){
-        $qtd_produto = $QTD_MINIMA;
+    if($qtd_produto <= ){
+        $qtd_produto = $0QTD_MINIMA;
     }
 
     $prod_query = mysqli_query($connection,"select id, status from estoque where id = $id;");
@@ -23,7 +23,7 @@
     
     }else if ($prod_data['status'] != "active"){
         echo '{
-            "code": 407,
+            "code": 403,
             "msg": "Inactive product"
         }';
 

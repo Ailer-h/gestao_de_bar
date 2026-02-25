@@ -8,10 +8,10 @@
 
         public $connection = null;
 
-        public function use_query($query) {
-            $query = mysqli_query($this -> connection, $query);
+        public function use_query($query_str) {
+            $query = mysqli_query($this -> connection, $query_str);
 
-            return mysqli_fetch_assoc($query);
+            return $query;
         }
 
         public function connect_to_db() {

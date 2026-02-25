@@ -7,7 +7,6 @@
         $acc_type = $request -> {'acc_type'};
 
         $db = new DatabaseConnection();
-        
         $db -> connect_to_db();
 
         $response_json = [];
@@ -32,6 +31,35 @@
                 "code_type" => "created",
                 "msg" => "User added"
             ];
+
+        }
+
+        $db -> end_connection();
+
+        return json_encode($response_json);
+
+    }
+
+    function get_users($user_id = null) {
+
+        $db = new DatabaseConnection();
+        $db -> connect_to_db();
+
+        $response_json = [];
+
+        $query_str = "select user_id, username, user_password, account_type, account_status, creation_date from users";
+
+        if ($user_id !== null){
+
+            $query_str = "select user_id, username, user_password, account_type, account_status, creation_date from users where user_id = $user_id";
+            
+        }
+
+        $users = $db -> use_query($query_str);
+
+        while($u = mysqli_fetch_assoc($users)){
+
+            array_push($response_json, $u);
 
         }
 

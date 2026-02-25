@@ -22,13 +22,15 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
         "uri" => $request_uri
     ];
 
+    $response = json_encode($response);
+
     switch ($_SERVER['REQUEST_METHOD']){
         case "GET":
             if (isset($request_uri[5])){
-                echo $request_uri[5];
-            
+                $response = get_users($request_uri[5]);
+
             }else{
-                echo json_encode($request_uri);
+                $response = get_users();
 
             }
 
@@ -48,5 +50,7 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
         case "DELETE":
             break;
     }
-    
+ 
+    echo $response;
+
 }

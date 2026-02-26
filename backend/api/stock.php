@@ -80,7 +80,6 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
 
             }
 
-
             break;
     }
  

@@ -42,7 +42,7 @@
 
     }
 
-    function get_users($user_id = null) {
+    function get_users($user_id = null){
 
         $db = new DatabaseConnection();
         $db -> connect_to_db();
@@ -70,12 +70,58 @@
         if (empty($response_json)){
 
             http_response_code(404);
+            
             $response_json = [
                 "code_type" => "not found",
                 "msg" => "No user found"
             ];
 
         }
+
+        return json_encode($response_json);
+
+    }
+
+    function update_user($user_id, $request){
+    
+        $db = new DatabaseConnection();
+        $db -> connect_to_db();
+
+        $response_json = [];
+
+        $user = mysqli_fetch_assoc($db -> query_db("select user_id, username, user_password, account_type, account_status, creation_date from users where user_id = $user_id"));
+
+        if (empty($user)){
+
+            http_response_code(400);
+
+            $response_json = [
+                "code_type" => "bad request",
+                "msg" => "Invalid id"
+            ];
+
+        }else{
+
+            $str_update = [];
+
+            foreach ($request as $key => $value){
+                array_push($str_update, "$key = '$value'");
+            }
+
+            array_push($response_json, implode(", ", $str_update));
+
+            $db -> query_db("update users set " . implode(", ", $str_update) . " where user_id = $user_id");
+
+            http_response_code(200);
+
+            $response_json = [
+                "code_type" => "ok",
+                "msg" => "User updated"
+            ];
+
+        }
+
+        $db -> end_connection();
 
         return json_encode($response_json);
 

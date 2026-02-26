@@ -47,13 +47,14 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
 
             $response = add_user($req_body);
             
-            http_response_code(json_decode($response) -> {"code"});
-
             break;
 
         case "PUT":
             if (isset($request_uri[5])){
-                
+
+                $req_body = json_decode(file_get_contents('php://input'));
+
+                $response = update_user($request_uri[5], $req_body);
 
             }else{
                 http_response_code(400);

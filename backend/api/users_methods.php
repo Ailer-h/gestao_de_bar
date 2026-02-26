@@ -11,7 +11,7 @@
 
         $response_json = [];
 
-        $user = $db -> use_query("select user_id, username, user_password, account_type, account_status from users where username = '$username'");
+        $user = $db -> query_db("select user_id, username, user_password, account_type, account_status from users where username = '$username'");
 
         if (!empty(mysqli_fetch_assoc($user))){
             $response_json = [
@@ -24,10 +24,10 @@
 
             //TO-DO: Adicionar criptografia para a senha. 
 
-            $db -> use_query("insert into users (username, user_password, account_type) values ('$username','$password','$acc_type')");
+            $db -> query_db("insert into users (username, user_password, account_type) values ('$username','$password','$acc_type')");
 
             $response_json = [
-                "code" => 200,
+                "code" => 201,
                 "code_type" => "created",
                 "msg" => "User added"
             ];
@@ -55,7 +55,7 @@
             
         }
 
-        $users = $db -> use_query($query_str);
+        $users = $db -> query_db($query_str);
 
         while($u = mysqli_fetch_assoc($users)){
 

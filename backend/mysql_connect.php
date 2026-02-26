@@ -8,7 +8,7 @@
 
         public $connection = null;
 
-        public function use_query($query_str) {
+        public function query_db($query_str) {
             $query = mysqli_query($this -> connection, $query_str);
 
             return $query;

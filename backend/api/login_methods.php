@@ -29,7 +29,7 @@ function login($request) {
             "msg" => "Inactive account"
         ];
     
-    }else if ($user_info['password'] != $password){
+    }else if ($user_info['user_password'] != $password){
         http_response_code(403);
         
         $response_json = [
@@ -75,6 +75,7 @@ function get_session(){
         ];
     
     }else {
+        http_response_code(200);
 
         $response_json = [
             "username" => $_SESSION["username"],
@@ -106,7 +107,7 @@ function logout(){
 
         session_destroy();
 
-        http_response_code(404);
+        http_response_code(200);
 
         $response_json = [
             "code_type" => "ok",

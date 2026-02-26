@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../mysql_connect.php';
 require_once __DIR__ . '/../error_handler.php';
 
-include "users_methods.php";
+include "stock_methods.php";
 
 set_exception_handler("ErrorHandler::handleError");
 
@@ -20,7 +20,7 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
         "message" => "Unsupported method"
     ]);
 
-}else {
+}else{
 
     $request_uri = explode("/",$_SERVER['REQUEST_URI']); 
 
@@ -28,10 +28,10 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
         case "GET":
             
             if (isset($request_uri[5])){
-                $response = get_users($request_uri[5]);
+                $response = get_stock($request_uri[5]);
 
             }else{
-                $response = get_users();
+                $response = get_stock();
 
             }
 
@@ -41,7 +41,7 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
 
             $req_body = json_decode(file_get_contents('php://input'));
 
-            $response = add_user($req_body);
+            $response = add_stock($req_body);
             
             break;
 
@@ -50,7 +50,7 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
             if (isset($request_uri[5])){
                 $req_body = json_decode(file_get_contents('php://input'));
 
-                $response = update_user($request_uri[5], $req_body);
+                $response = update_stock($request_uri[5], $req_body);
 
             }else{
                 http_response_code(400);
@@ -68,7 +68,7 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
             
             if (isset($request_uri[5])){
 
-                $response = delete_user($request_uri[5]);
+                $response = delete_stock($request_uri[5]);
 
             }else{
                 http_response_code(400);

@@ -1,165 +1,165 @@
 <?php
 
-    function add_user($request){
+function add_user($request){
 
-        $username = $request -> {'username'};
-        $password = $request -> {'password'};
-        $acc_type = $request -> {'acc_type'};
+    $username = $request -> {'username'};
+    $password = $request -> {'password'};
+    $acc_type = $request -> {'acc_type'};
 
-        $db = new DatabaseConnection();
-        $db -> connect_to_db();
+    $db = new DatabaseConnection();
+    $db -> connect_to_db();
 
-        $response_json = [];
+    $response_json = [];
 
-        $user = $db -> query_db("select user_id, username, user_password, account_type, account_status from users where username = '$username'");
+    $user = $db -> query_db("select user_id, username, user_password, account_type, account_status from users where username = '$username'");
 
-        if (!empty(mysqli_fetch_assoc($user))){
-            http_response_code(403);
+    if (!empty(mysqli_fetch_assoc($user))){
+        http_response_code(403);
+    
+        $response_json = [
+            "code_type" => "forbidden",
+            "msg" => "User already exists"
+        ];
+
+    }else{
+
+        //TO-DO: Adicionar criptografia para a senha. 
+
+        $db -> query_db("insert into users (username, user_password, account_type) values ('$username','$password','$acc_type')");
+
+        http_response_code(201);
+
+        $response_json = [
+            "code_type" => "created",
+            "msg" => "User added"
+        ];
+
+    }
+
+    $db -> end_connection();
+
+    return json_encode($response_json);
+
+}
+
+function get_users($user_id = null){
+
+    $db = new DatabaseConnection();
+    $db -> connect_to_db();
+
+    $response_json = [];
+
+    $query_str = "select user_id, username, user_password, account_type, account_status, creation_date from users";
+
+    if ($user_id !== null){
+
+        $query_str = "select user_id, username, user_password, account_type, account_status, creation_date from users where user_id = $user_id";
         
-            $response_json = [
-                "code_type" => "forbidden",
-                "msg" => "User already exists"
-            ];
-    
-        }else{
+    }
 
-            //TO-DO: Adicionar criptografia para a senha. 
+    $users = $db -> query_db($query_str);
 
-            $db -> query_db("insert into users (username, user_password, account_type) values ('$username','$password','$acc_type')");
+    while($u = mysqli_fetch_assoc($users)){
 
-            http_response_code(201);
-
-            $response_json = [
-                "code_type" => "created",
-                "msg" => "User added"
-            ];
-
-        }
-
-        $db -> end_connection();
-
-        return json_encode($response_json);
+        array_push($response_json, $u);
 
     }
 
-    function get_users($user_id = null){
+    $db -> end_connection();
 
-        $db = new DatabaseConnection();
-        $db -> connect_to_db();
+    if (empty($response_json)){
 
-        $response_json = [];
-
-        $query_str = "select user_id, username, user_password, account_type, account_status, creation_date from users";
-
-        if ($user_id !== null){
-
-            $query_str = "select user_id, username, user_password, account_type, account_status, creation_date from users where user_id = $user_id";
-            
-        }
-
-        $users = $db -> query_db($query_str);
-
-        while($u = mysqli_fetch_assoc($users)){
-
-            array_push($response_json, $u);
-
-        }
-
-        $db -> end_connection();
-
-        if (empty($response_json)){
-
-            http_response_code(404);
-            
-            $response_json = [
-                "code_type" => "not found",
-                "msg" => "No user found"
-            ];
-
-        }
-
-        return json_encode($response_json);
+        http_response_code(404);
+        
+        $response_json = [
+            "code_type" => "not found",
+            "msg" => "No user found"
+        ];
 
     }
 
-    function update_user($user_id, $request){
-    
-        $db = new DatabaseConnection();
-        $db -> connect_to_db();
+    return json_encode($response_json);
 
-        $response_json = [];
+}
 
-        $user = mysqli_fetch_assoc($db -> query_db("select user_id, username, user_password, account_type, account_status, creation_date from users where user_id = $user_id"));
+function update_user($user_id, $request){
 
-        if (empty($user)){
+    $db = new DatabaseConnection();
+    $db -> connect_to_db();
 
-            http_response_code(400);
+    $response_json = [];
 
-            $response_json = [
-                "code_type" => "bad request",
-                "msg" => "Invalid id"
-            ];
+    $user = mysqli_fetch_assoc($db -> query_db("select user_id, username, user_password, account_type, account_status, creation_date from users where user_id = $user_id and account_status = 'active'"));
 
-        }else{
+    if (empty($user)){
 
-            $str_update = [];
+        http_response_code(400);
 
-            foreach ($request as $key => $value){
-                array_push($str_update, "$key = '$value'");
-            }
+        $response_json = [
+            "code_type" => "bad request",
+            "msg" => "Invalid id"
+        ];
 
-            array_push($response_json, implode(", ", $str_update));
+    }else{
 
-            $db -> query_db("update users set " . implode(", ", $str_update) . " where user_id = $user_id");
+        $str_update = [];
 
-            http_response_code(200);
-
-            $response_json = [
-                "code_type" => "ok",
-                "msg" => "User updated"
-            ];
-
+        foreach ($request as $key => $value){
+            array_push($str_update, "$key = '$value'");
         }
 
-        $db -> end_connection();
+        array_push($response_json, implode(", ", $str_update));
 
-        return json_encode($response_json);
+        $db -> query_db("update users set " . implode(", ", $str_update) . " where user_id = $user_id");
+
+        http_response_code(200);
+
+        $response_json = [
+            "code_type" => "ok",
+            "msg" => "User updated"
+        ];
 
     }
 
-    function delete_user($user_id){
+    $db -> end_connection();
 
-        $db = new DatabaseConnection();
-        $db -> connect_to_db();
+    return json_encode($response_json);
 
-        $response_json = [];
+}
 
-        $user = mysqli_fetch_assoc($db -> query_db("select account_status from users where user_id = $user_id and account_status = 'active';"));
+function delete_user($user_id){
 
-        if (empty($user)){
+    $db = new DatabaseConnection();
+    $db -> connect_to_db();
 
-            http_response_code(400);
+    $response_json = [];
 
-            $response_json = [
-                "code_type" => "bad request",
-                "msg" => "Invalid id"
-            ];
+    $user = mysqli_fetch_assoc($db -> query_db("select account_status from users where user_id = $user_id and account_status = 'active';"));
 
-        }else{
+    if (empty($user)){
 
-            $db -> query_db("update users set account_status = 'inactive' where user_id = $user_id;");
+        http_response_code(400);
 
-            http_response_code(200);
+        $response_json = [
+            "code_type" => "bad request",
+            "msg" => "Invalid id"
+        ];
 
-            $response_json = [
-                "code_type" => "ok",
-                "msg" => "User deleted"
-            ];
+    }else{
 
-        }
+        $db -> query_db("update users set account_status = 'inactive' where user_id = $user_id;");
 
-        $db -> end_connection();
+        http_response_code(200);
 
-        return json_encode($response_json);
+        $response_json = [
+            "code_type" => "ok",
+            "msg" => "User deleted"
+        ];
 
     }
+
+    $db -> end_connection();
+
+    return json_encode($response_json);
+
+}

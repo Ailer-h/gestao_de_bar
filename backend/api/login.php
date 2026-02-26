@@ -3,13 +3,13 @@
 require_once __DIR__ . '/../mysql_connect.php';
 require_once __DIR__ . '/../error_handler.php';
 
-include "stock_entry_methods.php";
+include "login_methods.php";
 
 set_exception_handler("ErrorHandler::handleError");
 
 header("Content-type: application/json");
 
-$SUPPORTED_METHODS = ["GET","POST",];
+$SUPPORTED_METHODS = ["GET","POST","DELETE"];
 
 if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
 
@@ -27,13 +27,7 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
     switch ($_SERVER['REQUEST_METHOD']){
         case "GET":
             
-            if (isset($request_uri[5])){
-                $response = get_stock_entry($request_uri[5]);
-
-            }else{
-                $response = get_stock_entry();
-
-            }
+            $response = get_session();
 
             break;
         
@@ -41,10 +35,15 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
 
             $req_body = json_decode(file_get_contents('php://input'));
 
-            $response = add_stock_entry($req_body);
+            $response = login($req_body);
             
             break;
 
+        case "DELETE":
+        
+            $response = logout();
+
+            break;
     }
  
     echo $response;

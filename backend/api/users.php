@@ -31,6 +31,7 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
 
     switch ($_SERVER['REQUEST_METHOD']){
         case "GET":
+            
             if (isset($request_uri[5])){
                 $response = get_users($request_uri[5]);
 
@@ -50,8 +51,8 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
             break;
 
         case "PUT":
+            
             if (isset($request_uri[5])){
-
                 $req_body = json_decode(file_get_contents('php://input'));
 
                 $response = update_user($request_uri[5], $req_body);
@@ -69,6 +70,22 @@ if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
             break;
 
         case "DELETE":
+            
+            if (isset($request_uri[5])){
+
+                $response = delete_user($request_uri[5]);
+
+            }else{
+                http_response_code(400);
+
+                $response = json_encode([
+                    "error_code" => 400,
+                    "message" => "Must provide an id"
+                ]);
+
+            }
+
+
             break;
     }
  

@@ -126,3 +126,40 @@
         return json_encode($response_json);
 
     }
+
+    function delete_user($user_id){
+
+        $db = new DatabaseConnection();
+        $db -> connect_to_db();
+
+        $response_json = [];
+
+        $user = mysqli_fetch_assoc($db -> query_db("select account_status from users where user_id = $user_id and account_status = 'active';"));
+
+        if (empty($user)){
+
+            http_response_code(400);
+
+            $response_json = [
+                "code_type" => "bad request",
+                "msg" => "Invalid id"
+            ];
+
+        }else{
+
+            $db -> query_db("update users set account_status = 'inactive' where user_id = $user_id;");
+
+            http_response_code(200);
+
+            $response_json = [
+                "code_type" => "ok",
+                "msg" => "User deleted"
+            ];
+
+        }
+
+        $db -> end_connection();
+
+        return json_encode($response_json);
+
+    }

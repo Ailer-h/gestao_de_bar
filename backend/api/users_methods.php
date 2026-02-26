@@ -14,8 +14,9 @@
         $user = $db -> query_db("select user_id, username, user_password, account_type, account_status from users where username = '$username'");
 
         if (!empty(mysqli_fetch_assoc($user))){
+            http_response_code(403);
+        
             $response_json = [
-                "code" => 403,
                 "code_type" => "forbidden",
                 "msg" => "User already exists"
             ];
@@ -26,8 +27,9 @@
 
             $db -> query_db("insert into users (username, user_password, account_type) values ('$username','$password','$acc_type')");
 
+            http_response_code(201);
+
             $response_json = [
-                "code" => 201,
                 "code_type" => "created",
                 "msg" => "User added"
             ];
@@ -64,6 +66,16 @@
         }
 
         $db -> end_connection();
+
+        if (empty($response_json)){
+
+            http_response_code(404);
+            $response_json = [
+                "code_type" => "not found",
+                "msg" => "No user found"
+            ];
+
+        }
 
         return json_encode($response_json);
 

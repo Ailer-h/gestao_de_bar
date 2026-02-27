@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /gestao_de_bar/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^backend/api/([^/]+)(/.*)?$ backend/api/$1.php [L,QSA]

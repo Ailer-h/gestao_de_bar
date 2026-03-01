@@ -108,7 +108,22 @@ function update_suppliers($supplier_id, $request){
         $str_update = [];
 
         foreach ($request as $key => $value){
-            array_push($str_update, "$key = '$value'");
+
+            if ($key == "cnpj"){
+                
+                $cnpjs = mysqli_fetch_assoc($db -> query_db("select cnpj from fornecedores where cnpj = '$value' and acc_status = 'active';"));
+
+                if (empty($cnpjs)){
+                    array_push($str_update, "$key = '$value'");
+
+                }
+
+
+            }else{
+                array_push($str_update, "$key = '$value'");
+
+            }
+
         }
 
         $db -> query_db("update fornecedores set " . implode(", ", $str_update) . " where id = $supplier_id;");

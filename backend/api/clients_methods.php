@@ -103,7 +103,20 @@ function update_clients($client_id, $request){
         $str_update = [];
 
         foreach ($request as $key => $value){
-            array_push($str_update, "$key = '$value'");
+            if ($key == "cpf"){
+                
+                $cpfs = mysqli_fetch_assoc($db -> query_db("select cpf from clientes where cpf = '$value' and acc_status = 'active';"));
+
+                if (empty($cpfs)){
+                    array_push($str_update, "$key = '$value'");
+
+                }
+
+
+            }else{
+                array_push($str_update, "$key = '$value'");
+
+            }
         }
 
         $db -> query_db("update clientes set " . implode(", ", $str_update) . " where id = $client_id");

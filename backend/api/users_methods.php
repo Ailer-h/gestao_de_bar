@@ -105,12 +105,22 @@ function update_user($user_id, $request){
         $str_update = [];
 
         foreach ($request as $key => $value){
-            array_push($str_update, "$key = '$value'");
+            if ($key == "username"){
+
+                $usernames = mysqli_fetch_assoc($db -> query_db("select username from users where username = '$value'"));
+
+                if (empty($usernames)){
+                    array_push($str_update, "$key = '$value'");
+                    
+                }
+                    
+            }else{
+                array_push($str_update, "$key = '$value'");
+
+            }
         }
 
-        array_push($response_json, implode(", ", $str_update));
-
-        $db -> query_db("update users set " . implode(", ", $str_update) . " where user_id = $user_id");
+        $db -> query_db("update users set " . implode(", ", $str_update) . " where user_id = $user_id and account_status = 'active'");
 
         http_response_code(200);
 

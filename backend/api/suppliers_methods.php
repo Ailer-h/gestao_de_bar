@@ -1,39 +1,44 @@
 <?php
 
-function add_clients($request) {
+use Dom\Mysql;
+
+function add_suppliers($request) {
 
     $nome = $request -> {"nome"};
+    $cnpj = $request -> {"cnpj"};
     $telefone = $request -> {"telefone"};
-    $cpf = $request -> {"cpf"};
     $email = $request -> {"email"};
+    $endereco = $request -> {"endereco"};
 
     $db = new DatabaseConnection();
     $db -> connect_to_db();
 
     $response_json = [];
 
-    $client = mysqli_fetch_assoc($db -> query_db("select cpf from clientes where cpf = '$cpf'"));
+    $fornec = mysqli_fetch_assoc($db -> query_db("select cnpj from fornecedores where cnpj = '$cnpj'"));
 
-    if (!empty($client)){
+    if (!empty($fornec)) {
 
         http_response_code(403);
 
         $response_json = [
             "code_type" => "forbidden",
-            "msg" => "CPF already in use"
+            "msg" => "CNPJ already in use"
         ];
-        
+
     }else{
-        $db -> query_db("insert into clientes (nome, telefone, cpf, email) values ('$nome', '$telefone', '$cpf', '$email');");
+
+        $db -> query_db("insert into fornecedores (nome, cnpj, telefone, email, endereco) values ('$nome','$cnpj','$telefone','$email','$endereco')");
 
         http_response_code(201);
-
+    
         $response_json = [
             "code_type" => "created",
-            "msg" => "Client added"
+            "msg" => "Supplier added"
         ];
 
     }
+
 
     $db -> end_connection();
 
@@ -41,18 +46,18 @@ function add_clients($request) {
 
 }
 
-function get_clients($client_id = null){
+function get_suppliers($supplier_id = null){
 
     $db = new DatabaseConnection();
     $db -> connect_to_db();
 
     $response_json = [];
 
-    $query_str = "select id, nome, telefone, cpf, email, creation_date, acc_status from clientes;";
+    $query_str = "select id, nome, cnpj, telefone, email, endereco, creation_date, acc_status from fornecedores;";
 
-    if ($client_id !== null){
+    if ($supplier_id !== null){
 
-        $query_str = "select id, nome, telefone, cpf, email, creation_date, acc_status from clientes where id = $client_id;";
+        $query_str = "select id, nome, cnpj, telefone, email, endereco, creation_date, acc_status from fornecedores where id = $supplier_id;";
         
     }
 
@@ -71,7 +76,7 @@ function get_clients($client_id = null){
         
         $response_json = [
             "code_type" => "not found",
-            "msg" => "No clients found"
+            "msg" => "No suppliers found"
         ];
     
     }
@@ -80,14 +85,14 @@ function get_clients($client_id = null){
 
 }
 
-function update_clients($client_id, $request){
+function update_suppliers($supplier_id, $request){
 
     $db = new DatabaseConnection();
     $db -> connect_to_db();
 
     $response_json = [];
 
-    $item = mysqli_fetch_assoc($db -> query_db("select id, nome, telefone, cpf, email, creation_date, acc_status from clientes where id = $client_id;"));
+    $item = mysqli_fetch_assoc($db -> query_db("select id, nome, cnpj, telefone, email, endereco, creation_date, acc_status from fornecedores where id = $supplier_id;"));
 
     if (empty($item)){
 
@@ -106,13 +111,13 @@ function update_clients($client_id, $request){
             array_push($str_update, "$key = '$value'");
         }
 
-        $db -> query_db("update clientes set " . implode(", ", $str_update) . " where id = $client_id");
+        $db -> query_db("update fornecedores set " . implode(", ", $str_update) . " where id = $supplier_id;");
 
         http_response_code(200);
 
         $response_json = [
             "code_type" => "ok",
-            "msg" => "Client updated"
+            "msg" => "Supplier updated"
         ];
 
     }
@@ -123,14 +128,14 @@ function update_clients($client_id, $request){
 
 }
 
-function delete_clients($client_id){
+function delete_suppliers($supplier_id){
 
     $db = new DatabaseConnection();
     $db -> connect_to_db();
 
     $response_json = [];
 
-    $item = mysqli_fetch_assoc($db -> query_db("select acc_status from clientes where id = $client_id;"));
+    $item = mysqli_fetch_assoc($db -> query_db("select acc_status from fornecedores where id = $supplier_id and acc_status = 'active';"));
 
     if (empty($item)){
 
@@ -143,13 +148,13 @@ function delete_clients($client_id){
 
     }else{
 
-        $db -> query_db("update clientes set acc_status = 'inactive' where id = $client_id");
+        $db -> query_db("update fornecedores set acc_status = 'inactive' where id = $supplier_id;");
 
         http_response_code(200);
 
         $response_json = [
             "code_type" => "ok",
-            "msg" => "Client deleted"
+            "msg" => "Supplier deleted"
         ];
 
     }

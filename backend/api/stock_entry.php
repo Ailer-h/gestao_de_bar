@@ -9,7 +9,7 @@ set_exception_handler("ErrorHandler::handleError");
 
 header("Content-type: application/json");
 
-$SUPPORTED_METHODS = ["GET","POST",];
+$SUPPORTED_METHODS = ["GET","POST"];
 
 if (!in_array($_SERVER['REQUEST_METHOD'], $SUPPORTED_METHODS)){
 

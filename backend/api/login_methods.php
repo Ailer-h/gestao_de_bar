@@ -1,4 +1,4 @@
-new<?php
+<?php
 
 function login($request) {
 

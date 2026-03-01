@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function(){
 function log_in(){
 
     $.ajax({
-        url: "backend/php/login.php",
+        url: "backend/api/login",
         method: "post",
         data: {
             username: username_obj.value,

@@ -1,23 +1,24 @@
 <?php
 
-function add_products($request) {
+function add_clients($request) {
 
-    $name = $request -> {"name"};
-    $value = $request -> {"value"};
-    $sell_price = $request -> {"sell_price"};
+    $nome = $request -> {"nome"};
+    $telefone = $request -> {"telefone"};
+    $cpf = $request -> {"cpf"};
+    $email = $request -> {"email"};
 
     $db = new DatabaseConnection();
     $db -> connect_to_db();
 
     $response_json = [];
 
-    $db -> query_db("insert into produtos (nome, valor_producao, valor_venda) values ('$name', '$value', '$sell_price');");
+    $db -> query_db("insert into clientes (nome, telefone, cpf, email) values ('$nome', '$telefone', '$cpf', '$email');");
 
     http_response_code(201);
 
     $response_json = [
         "code_type" => "created",
-        "msg" => "Product added"
+        "msg" => "Client added"
     ];
 
     $db -> end_connection();
@@ -26,18 +27,18 @@ function add_products($request) {
 
 }
 
-function get_products($product_id = null){
+function get_clients($client_id = null){
 
     $db = new DatabaseConnection();
     $db -> connect_to_db();
 
     $response_json = [];
 
-    $query_str = "select id, nome, valor_producao, valor_venda, status from produtos;";
+    $query_str = "select id, nome, telefone, cpf, email, creation_date, acc_status from clientes;";
 
-    if ($product_id !== null){
+    if ($client_id !== null){
 
-        $query_str = "select id, nome, valor_producao, valor_venda, status from produtos where id = $product_id;";
+        $query_str = "select id, nome, telefone, cpf, email, creation_date, acc_status from clientes where id = $client_id;";
         
     }
 
@@ -56,7 +57,7 @@ function get_products($product_id = null){
         
         $response_json = [
             "code_type" => "not found",
-            "msg" => "No products found"
+            "msg" => "No clients found"
         ];
     
     }
@@ -65,14 +66,14 @@ function get_products($product_id = null){
 
 }
 
-function update_products($product_id, $request){
+function update_clients($client_id, $request){
 
     $db = new DatabaseConnection();
     $db -> connect_to_db();
 
     $response_json = [];
 
-    $item = mysqli_fetch_assoc($db -> query_db("select id, nome, valor_producao, valor_venda, status from produtos where id = $product_id and status = 'active';"));
+    $item = mysqli_fetch_assoc($db -> query_db("select id, nome, telefone, cpf, email, creation_date, acc_status from clientes where id = $client_id;"));
 
     if (empty($item)){
 
@@ -91,13 +92,13 @@ function update_products($product_id, $request){
             array_push($str_update, "$key = '$value'");
         }
 
-        $db -> query_db("update produtos set " . implode(", ", $str_update) . " where id = $product_id");
+        $db -> query_db("update clientes set " . implode(", ", $str_update) . " where id = $client_id");
 
         http_response_code(200);
 
         $response_json = [
             "code_type" => "ok",
-            "msg" => "Product updated"
+            "msg" => "Client updated"
         ];
 
     }
@@ -108,16 +109,16 @@ function update_products($product_id, $request){
 
 }
 
-function delete_products($product_id){
+function delete_clients($client_id){
 
     $db = new DatabaseConnection();
     $db -> connect_to_db();
 
     $response_json = [];
 
-    $product_info = mysqli_fetch_assoc($db -> query_db("select status from produtos where id = $product_id and status = 'active';"));
+    $item = mysqli_fetch_assoc($db -> query_db("select acc_status from clientes where id = $client_id;"));
 
-    if (empty($product_info)){
+    if (empty($item)){
 
         http_response_code(400);
 
@@ -128,13 +129,13 @@ function delete_products($product_id){
 
     }else{
 
-        $db -> query_db("update produtos set status = 'inactive' where id = $product_id;");
+        $db -> query_db("update clientes set acc_status = 'inactive' where id = $client_id");
 
         http_response_code(200);
 
         $response_json = [
             "code_type" => "ok",
-            "msg" => "Product deleted"
+            "msg" => "Client deleted"
         ];
 
     }
